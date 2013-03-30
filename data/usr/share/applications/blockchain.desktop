@@ -1,0 +1,11 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Comment=Blockchain.info
+Exec=xdg-open https://blockchain.info
+GenericName=Blockchain.info
+Icon=/usr/share/app-install/icons/blockchain.png
+Name=Blockchain.info
+Categories=Network;
+StartupNotify=false
+Terminal=false
+Type=Application

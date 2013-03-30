@@ -1,0 +1,8 @@
+[Desktop Entry]
+Comment=Lightweight Bitcoin Client
+Exec=electrum -w %u
+GenericName=Electrum
+Icon=/usr/share/app-install/icons/electrum.png
+MimeType=application/x-electrum-wallet
+Name=Electrum Bitcoin
+StartupNotify=true

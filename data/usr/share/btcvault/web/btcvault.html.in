@@ -1,0 +1,46 @@
+#define TITLE BTC Vault - Slax Bitcoin Distribution
+#define SECTION_BTCVAULT
+#include <header.html>
+
+LEFT_SIDE
+
+RIGHT_SIDE
+
+CONTENT
+
+<h1>BTC Vault</h1>
+
+<h2>Features</h2>
+BTC Vault is based on Slax and thus contains a full Linux installation including the KDE desktop
+environment and the Firefox webbrowser.<br/>
+Also, BTC Vault includes the <a href="electrum.html">Electrum bitcoin client</a> that you can use
+to manage your coins.<br/>
+Some additional modifications include:
+<ul>
+  <li>All Electrum wallets (<tt>electrum.dat</tt> and all <tt>.wallet</tt> files) will open with 
+      Electrum.</li>
+  <li>You can create new wallets by using the action from the folder context menu or the desktop
+      icon.</li>
+  <li>Firefox supports the <tt>bitcoin:</tt> url-scheme.</li>
+  <li>Links on the desktop lead to Blockchain.org and a local copy of Brainwallet.org.</li>
+  <li>Links on the desktop and the panel lead to the home directory.</li>
+  <li>Populated the keyboard chooser in the panel with German, French and Spanish layouts.</li> 
+</ul>
+
+<h2>Recommendations</h2>
+<ul>
+  <li>Use BTC Vault to create a safe wallet and store it on a dedicated USB stick. Print out the
+      seed and store that in a safe location.</li>
+  <li>Create a read-only wallet to check your balance on your normal computer as described in the
+      section <a href="electrum.html">Electrum</a>.</li>
+  <li>Only start up BTC Vault and open your wallet when you want to spend some coins.</li>
+  <li>If you want to, create a second wallet containing only a small amount of coins (that you can
+      risk losing) on your normal computer for small transactions.</li>
+</ul>
+
+<h2>Changelog</h2>
+<ul>
+  <li>0.1: Initial release</li>
+</ul>
+
+#include <footer.html>

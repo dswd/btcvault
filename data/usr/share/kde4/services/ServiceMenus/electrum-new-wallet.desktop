@@ -1,0 +1,11 @@
+[Desktop Action NewWallet]
+Exec=electrum-wrapper.sh save '%u'
+Name=Create Electrum Bitcoin Wallet...
+Icon=/usr/share/app-install/icons/electrum.png
+
+[Desktop Entry]
+Type=Service
+ServiceTypes=inode/folder
+X-KDE-ServiceTypes=KonqPopupMenu/Plugin,inode/directory
+Actions=NewWallet
+ 

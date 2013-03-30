@@ -1,0 +1,80 @@
+#!/bin/bash
+. /usr/share/slax/slaxbuildlib
+
+SLAX_BUNDLE_NAME="electrum"
+SLAX_BUNDLE_VERSION="1.7.2"
+SLAX_BUNDLE_DESCRIPTION="Electrum bitcoin client"
+SLAX_BUNDLE_CATEGORIES="network,utilities,security"
+SLAX_BUNDLES_REQUIRED="python pyqt"
+SLAX_BUNDLES_REQUIRED_TO_COMPILE_ONLY=""
+SLAX_BUNDLE_MAINTAINER_NAME="Dennis Schwerdel"
+SLAX_BUNDLE_MAINTAINER_EMAIL="schwerdel@googlemail.com"
+
+ECDSA_VERSION=0.8
+SLOWAES_VERSION=0.1a1
+
+SLAX_BUNDLE_SOURCE_DOWNLOAD[0]="http://download.electrum.org/download/Electrum-$SLAX_BUNDLE_VERSION.tar.gz"
+SLAX_BUNDLE_SOURCE_DOWNLOAD[1]="http://pypi.python.org/packages/source/e/ecdsa/ecdsa-$ECDSA_VERSION.tar.gz"
+SLAX_BUNDLE_SOURCE_DOWNLOAD[2]="http://pypi.python.org/packages/source/s/slowaes/slowaes-$SLOWAES_VERSION.tar.gz"
+
+check_variables_for_errors
+download_all_sources
+
+md5sum --check <<EOF
+510e66e9ac2d957d5286889b050d2478  Electrum-1.7.2.tar.gz
+a3575705afb24d7cbc1694960d3965b1  ecdsa-0.8.tar.gz
+eafee95a788a795403e972a35e80ce4f  slowaes-0.1a1.tar.gz
+EOF
+
+extract_all_sources
+init_bundle_target_dir
+activate_required_bundles
+
+patch -p0 <<EOF
+--- electrum.orig 2013-03-28 10:29:21.000000000 +0000
++++ Electrum-${SLAX_BUNDLE_VERSION}/electrum 2013-03-28 10:46:37.926152510 +0000
+@@ -83,6 +83,22 @@
+     parser.add_option("-u", "--usb", dest="bitkey", action="store_true", help="Turn on support for hardware wallets (EXPERIMENTAL)")
+     return parser
+ 
++def ensurePersistent(path):
++    path = os.path.abspath(path)
++    while not os.path.ismount(path):
++        path = os.path.dirname(path)
++    if path != '/':
++        return
++    from glob import glob
++    aufs = glob('/sys/fs/aufs/*/br0')
++    if not aufs:
++        return
++    with open(aufs[0]) as fp:
++        branch = fp.read().strip()
++    if 'memory' in branch:
++        print >>sys.stderr, "Electrum refuses to use a wallet on temporary storage. Please select a permanent storage location using -w."
++        sys.exit(-1)
++      
+ 
+ if __name__ == '__main__':
+ 
+@@ -105,6 +121,7 @@
+ 
+     config = SimpleConfig(config_options)
+     wallet = Wallet(config)
++    ensurePersistent(config.path)
+ 
+ 
+     if len(args)==0:
+EOF
+
+cd ${SLAX_CURRENT_BUILDSCRIPT_DIR}/slowaes-$SLOWAES_VERSION
+sed -i setup.py -e s/setuptools/distutils.core/g
+python setup.py install --root="${SLAX_BUNDLE_TARGET}"
+
+cd ${SLAX_CURRENT_BUILDSCRIPT_DIR}/ecdsa-$ECDSA_VERSION
+python setup.py install --root="${SLAX_BUNDLE_TARGET}"
+
+cd ${SLAX_CURRENT_BUILDSCRIPT_DIR}/Electrum-${SLAX_BUNDLE_VERSION}
+python setup.py install --root="${SLAX_BUNDLE_TARGET}"
+
+strip_unneeded_objects
+create_slax_bundle

@@ -1,0 +1,29 @@
+#!/bin/bash
+. /usr/share/slax/slaxbuildlib
+
+SLAX_BUNDLE_NAME="btcvault"
+SLAX_BUNDLE_VERSION="0.1"
+SLAX_BUNDLE_DESCRIPTION="BTC Vault - Slax Bitcoin Distribution"
+SLAX_BUNDLE_CATEGORIES="network,utilities,security"
+SLAX_BUNDLES_REQUIRED="electrum"
+SLAX_BUNDLES_REQUIRED_TO_COMPILE_ONLY=""
+SLAX_BUNDLE_MAINTAINER_NAME="Dennis Schwerdel"
+SLAX_BUNDLE_MAINTAINER_EMAIL="schwerdel@googlemail.com"
+SLAX_BUNDLE_SOURCE_DOWNLOAD[0]="file:///"
+SLAX_BUNDLE_SOURCE_DOWNLOAD[1]=""
+SLAX_BUNDLE_SOURCE_DOWNLOAD[2]=""
+
+check_variables_for_errors
+download_all_sources
+extract_all_sources
+init_bundle_target_dir
+activate_required_bundles
+
+rsync -Pa ../data/ ${SLAX_BUNDLE_TARGET}/
+chown -R root:root ${SLAX_BUNDLE_TARGET}/
+cd ${SLAX_BUNDLE_TARGET}/usr/share/btcvault/web
+make
+rm -rf Makefile layout *.in
+
+strip_unneeded_objects
+create_slax_bundle

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/x-electrum-wallet">
+    <comment>Electrum Bitcoin Wallet</comment>
+    <icon name="/usr/share/app-install/icons/electrum.png"/>
+    <glob-deleteall/>
+    <glob pattern="*.wallet"/>
+    <glob pattern="electrum.dat"/>  
+  </mime-type>
+</mime-info>

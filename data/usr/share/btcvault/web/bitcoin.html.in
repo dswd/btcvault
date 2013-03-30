@@ -1,0 +1,48 @@
+#define TITLE BTC Vault - Slax Bitcoin Distribution
+#define SECTION_BITCOIN
+#include <header.html>
+
+LEFT_SIDE
+
+RIGHT_SIDE
+
+<h2>External links</h2>
+MENU_BEGIN
+menu_entry(EXTERNAL Bitcoin Website,http://www.bitcoin.org)
+menu_entry(EXTERNAL Bitcoin Clients,http://www.bitcoin.org/en/choose-your-wallet)
+MENU_END
+
+
+CONTENT
+
+<h1>Bitcoin</h1>
+Bitcoin is a digital currency, a protocol, and a software that enables
+<ul>
+  <li>Instant peer to peer transactions</li>
+  <li>Worldwide payments</li>
+  <li>Low or zero processing fees</li>
+  <li>And much more!</li>
+</ul>
+Bitcoin uses peer to peer technology to operate with no central authority; managing transactions 
+and issuing Bitcoins are carried out collectively by the network. Through many of its unique 
+properties, Bitcoin allows exciting uses that could not be covered by any previous payment systems.
+
+
+<h2>Tools</h2>
+There exist a lot of tools for the bitcoin currency. Here is a small list:
+<ul>
+  <li><a href="https://blockchain.info">Blockchain.info</a> gives an online view on the block chain
+      and can be used to investigate blocks, addresses and transactions.</li>
+  <li><a href="file:///usr/share/btcvault/brainwallet.org/index.html">Brainwallet.org (local copy)</a>
+      contains some usefull tools to work with the encryption behind bitcoin and also can convert
+      some key formats.</li>
+</ul>
+
+<h2>Marketplaces</h2>
+To exchange bitcoins with local currency there are some marketplaces:
+<ul>
+  <li><a href="https://mtgox.com">MtGox.com</a> is the biggest marketplace.</a></li>
+  <li><a href="https://bitcoin.de">Bitcoin.de</a> is a bit european marketplace.</a></li>
+</ul>
+
+#include <footer.html>

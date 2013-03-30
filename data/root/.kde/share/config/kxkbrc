@@ -1,0 +1,13 @@
+
+[Layout]
+DisplayNames=,
+LayoutList=us,de,fr,es
+LayoutLoopCount=-1
+Model=pc101
+ResetOldOptions=false
+ShowFlag=true
+ShowLabel=false
+ShowLayoutIndicator=true
+ShowSingle=true
+SwitchMode=Global
+Use=true

@@ -1,0 +1,11 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Comment=Brainwallet.org
+Exec=xdg-open file:///usr/share/btcvault/brainwallet.org/index.html
+GenericName=Brainwallet.org
+Icon=text-html
+Name=Brainwallet.org
+Categories=Network;
+StartupNotify=false
+Terminal=false
+Type=Application

@@ -1,0 +1,25 @@
+#define TITLE BTC Vault - Slax Bitcoin Distribution
+#define SECTION_WELCOME
+#include <header.html>
+
+LEFT_SIDE
+
+RIGHT_SIDE
+
+CONTENT
+
+<h1>Welcome</h1>
+
+<b>Welcome to BTC Vault, a Linux distribution designed to securely handle bitcoin wallets.</b>
+<p>
+Before using BTC Vault please read the chapter on <a href="btcvault.html">BTC Vault</a>. If you are
+new to <a href="bitcoin.html">Bitcoin</a> or the <a href="electrum.html">Electrum client</a>, 
+please read the corresponding chapters. It is also strongly recommended to read the chapter on 
+<a href="security.html">Security</a>.
+</p> 
+
+<p>
+If you like BTC Vault, please feel free to send some coins to <nobr><img src="img/bitcoin16.png" valign="middle"><a href="bitcoin:16ydq3vUMwHwKycG2r7YZePMkT5GdTTCvK?label=BTC Vault">16ydq3vUMwHwKycG2r7YZePMkT5GdTTCvK</a></nobr>
+</p>
+
+#include <footer.html>
