@@ -1,0 +1,25 @@
+#define TITLE BTC Vault - Slax Bitcoin Distribution
+#define SECTION_FAQ
+#include <header.html>
+
+LEFT_SIDE
+
+RIGHT_SIDE
+
+CONTENT
+
+<h1>Frequently Asked Questions</h1>
+
+<h3>Why does BTC Vault not include other bitcoin clients ?</h3>
+Most bitcoin clients other than Electrum need to download an maintain the block chain. Updating the block chain means a download of several megabytes up to some gigabytes depending on the client. This is not suitable for a live distribution that can not store the block chain and needs to download it on every run.
+
+<h3>Why does BTC Vault not include $feature ?</h3>
+Most likely because BTC Vault is very young and I focused on getting it to work. If you feel that something is missing, please contact me.
+
+<h3>How often will there be new releases and do I have to update ?</h3>
+I do not plan to have some scheduled releases. Instead I will update it from time to time to fix bugs, include new features and update to included software. For users that already have a version of BTC Vault there should not be a immediate need to update to a new release as the old one should be fine.
+
+<h3>How can I be sure that BTC Vault does not steal my coins ?</h3>
+You can and should check for yourself by performing the steps described in the section <a href="security.html">Security</a>.
+
+#include <footer.html>

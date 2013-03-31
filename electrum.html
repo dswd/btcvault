@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta name="description" content="BTC Vault - Slax Bitcoin Distribution" />
+  <meta name="keywords" content="slax linux secure bitcoin btc distribution electrum" />
+  <title>BTC Vault - Slax Bitcoin Distribution</title>
+  <link href="css/style.css" type="text/css" rel="stylesheet" />
+  <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+
+<div id="page_wrapper">
+
+<div id="header_wrapper">
+
+<div id="header">
+  <img src="img/bitcoin.png" class="float_left" height="80"/>
+  <h2>BTC <font color="#FFDF8C">Vault</font></h2>
+  <h3>Slax Bitcoin Distribution</h3>
+</div>
+
+<div id="navcontainer">
+  <ul id="navlist">
+<li><a href="index.html">BTC Vault</a></li>
+
+<li><a href="bitcoin.html">Bitcoin</a></li>
+
+<li id="active"><a href="electrum.html" id="current">Electrum</a></li>
+
+<li><a href="obtain.html">Obtain</a></li>
+
+<li><a href="security.html">Security</a></li>
+
+<li><a href="faq.html">FAQ</a></li>
+
+<li><a href="https://github.com/dswd/btcvault">&#x21aa; Github Project</a></li>
+  </ul>
+</div>
+
+</div><div id="left_side">
+
+</div><div id="right_side">
+
+<h2>External links</h2>
+<ul class="menu">
+<li><a href="http://www.electrum.org">&#x21aa; Electrum homepage</a></li>
+</ul>
+
+
+</div><div id="content">
+
+<h1>Electrum</h1>
+<img src="img/electrum1.png" class="float_right"/>
+Electrum is an easy to use Bitcoin client. It protects you from losing coins in a backup mistake
+or computer failure, because your wallet can be recovered from a secret phrase that you can write
+on paper or learn by heart. There is no waiting time when you start the client, because it does
+not download the Bitcoin blockchain.<br/>
+<br/>
+Features:
+<ul>
+  <li>Instant on: Your client does not download the blockchain, it uses a remote server.</li>
+  <li>Forgiving: Your wallet can be recovered from a secret seed.</li>
+  <li>Safe: Private keys are never sent to the server. Information sent by the server is verified
+      using SPV</li>
+  <li>No downtimes: Several public servers are available, you can switch instantly.</li>
+  <li>Ubiquitous: You can use the same wallet on different computers, it will auto-synchronize.
+      </li>
+  <li>Open: You can export your private keys into other Bitcoin clients.</li>
+  <li>Tested and audited: Electrum is open source and was first released in November 2011.</li>
+</ul>
+
+<h2>Security considerations</h2>
+Since Electrum does not manage the block chain on its own, it relies on external servers to obtain
+and broadcast transactions. The transactions you create are signed by you and can not be modified 
+by these servers. The only thing they can do is delay or not deliver them, but that means no harm
+to your coins. In the other direction, the servers also can not make up transactions because they
+are linked to a chain. The server can only hide transactions from your client which is an 
+inconvenience but can not be used to steal coins from you.
+
+<h2>Read-Only Wallet</h2>
+Electrum can export you "master public key" (in the settings tab). Using this key you can predict
+all addresses of the wallet but not create transactions from it (you would need the private "seed"
+for that). You can create a read-only wallet by restoring the wallet from this master public key.
+Using this method you can have a read-only wallet on your regular computer where you can check the
+balance while still having your coins in a safe place.
+
+<p/></div>
+
+<div id="footer">
+  Copyright (c) 2013, Dennis Schwerdel, <a href="mailto:schwerdel+bitcoin-at-googlemail.com">schwerdel+bitcoin-at-googlemail.com</a>
+  <br/>
+  <img src="img/bitcoin16.png" valign="middle"> Donations accepted: <a href="bitcoin:16ydq3vUMwHwKycG2r7YZePMkT5GdTTCvK?label=BTC Vault">16ydq3vUMwHwKycG2r7YZePMkT5GdTTCvK</a>
+  <br/>
+  Template provided by: <a href="http://www.designsbydarren.com" target="_blank">DesignsByDarren.com</a>
+</div>
+
+</div>
+
+</body>
+
+</html>
