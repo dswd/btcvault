@@ -36,6 +36,8 @@ There exist a lot of tools for the bitcoin currency. Here is a small list:
   <li><a href="file:///usr/share/btcvault/brainwallet.org/index.html">Brainwallet.org (local copy)</a>
       contains some usefull tools to work with the encryption behind bitcoin and also can convert
       some key formats.</li>
+  <li><a href="file:///usr/share/btcvault/bitaddress.org.html">Bitaddress.org (local copy)</a>
+      contains some usefull tools to work with bitcoin addresses and create paper wallets.</li>
 </ul>
 
 <h2>Marketplaces</h2>

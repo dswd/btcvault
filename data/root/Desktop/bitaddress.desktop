@@ -1,0 +1,11 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Comment=Bitaddress.org
+Exec=xdg-open file:///usr/share/btcvault/bitaddress.org.html
+GenericName=Bitaddress.org
+Icon=text-html
+Name=Bitaddress.org
+Categories=Network;
+StartupNotify=false
+Terminal=false
+Type=Application

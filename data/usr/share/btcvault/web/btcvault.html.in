@@ -22,7 +22,7 @@ Some additional modifications include:
   <li>You can create new wallets by using the action from the folder context menu or the desktop
       icon.</li>
   <li>Firefox supports the <tt>bitcoin:</tt> url-scheme.</li>
-  <li>Links on the desktop lead to Blockchain.org and a local copy of Brainwallet.org.</li>
+  <li>Links on the desktop lead to Blockchain.org and local copies of Brainwallet.org and Bitaddress.org.</li>
   <li>Links on the desktop and the panel lead to the home directory.</li>
   <li>Populated the keyboard chooser in the panel with German, French and Spanish layouts.</li> 
 </ul>
