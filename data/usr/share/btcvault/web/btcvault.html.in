@@ -41,6 +41,11 @@ Some additional modifications include:
 <h2>Changelog</h2>
 <ul>
   <li>0.1: Initial release</li>
+  <li>NEXT: 
+    <ul>
+      <li>Added local copy of bitaddress.org with shortcut on desktop and in menu</li>
+      <li>Disabled flash plugin by default</li>
+    </ul></li>
 </ul>
 
 #include <footer.html>
