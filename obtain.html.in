@@ -25,7 +25,7 @@ CONTENT
       <li><a href="https://mega.co.nz/#!UZk0zRjS!ds2bZXuuv6838HNJcWBlOxfH-hISYirXWYip1BHpbjc">btcvault-0.1.zip</a> (for installation on USB stick, 230 MiB)</li>
       <li><a href="https://mega.co.nz/#!JdVG2KIJ!Jh2csztlg-NV-XC5jWi14Axu2nF-uD6MZaL2Zbtkq00">9999-btcvault.sb</a> (for usage on a Slax system, 0.3 MiB)</li>
       <li><a href="https://mega.co.nz/#!wIsQAYJA!Pps6rBcDbEiXv2vNUu7RAQ-k4q4LGEJJ76e4Klflnoo">2692-electrum.sb</a> (for usage on a Slax system, 0.4 MiB)</li>
-      <li>Release checksum: a12e25bdd23782413747ca2e40f1bff2</li>
+      <li><a href="btcvault-0.1-checksums.txt">Release checksums</a></li>
     </ul></li>
 </ul>
 
