@@ -45,6 +45,7 @@ Some additional modifications include:
     <ul>
       <li>Added local copy of bitaddress.org with shortcut on desktop and in menu</li>
       <li>Disabled flash plugin by default</li>
+      <li>Disabled Xorg server functionality</li>
     </ul></li>
 </ul>
 
