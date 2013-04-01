@@ -40,7 +40,7 @@ There are four major rules about bitcoin wallet security:
       Even if no attacker steals your coins, they can be lost for you if you lose access to your 
       wallet. This does not mean that you should store your wallet file in a cloud storage where 
       someone else might possibly access it. With the electrum bitcoin client it is enough to 
-      backup the master key called "seed":
+      backup the master key called "seed" as long as you did not import any other private keys:
       <ul>
         <li>You can print it out and store it in a safe place.</li>
         <li>You can encrypt it and store it on another safe computer or on a usb stick.</li>
@@ -115,8 +115,8 @@ $ diff -r btcvault_module rebuilt_module
 <h3>Check by Proxy</h3>
 If these steps are too complicated for you, and you trust someone else who checked the files you 
 can compare your version to the one he checked using the following command:
-<pre><code>$ find slax -type f -exec md5sum \{\} \; | sort | md5sum
+<pre><code>$ find slax -type f -exec md5sum \{\} \; | sort -k 2
 </code></pre>
-This command will output a hash that is built upon all hashes of all files on you CD or USB stick.
-If it matches, the contents are identical.
+This command will output a list of hashes of all files on you CD or USB stick.
+If they match, the contents are identical.
 #include <footer.html>
