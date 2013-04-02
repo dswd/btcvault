@@ -1,0 +1,11 @@
+--- /mnt/live/memory/bundles/07-ffox.sb/root/.mozilla/firefox/z3mlc794.default/prefs.js	2013-03-13 11:08:18.000000000 +0000
++++ /root/.mozilla/firefox/z3mlc794.default/prefs.js	2013-04-02 10:18:49.171003310 +0000
+@@ -32,7 +32,7 @@
+ user_pref("browser.rights.3.shown", true);
+ user_pref("browser.search.update", false);
+ user_pref("browser.shell.checkDefaultBrowser", false);
+-user_pref("browser.startup.homepage", "about:newtab");
++user_pref("browser.startup.homepage", "file:///usr/share/btcvault/web/index.html");
+ user_pref("browser.startup.homepage_override.buildID", "20130308152701");
+ user_pref("browser.startup.homepage_override.mstone", "19.0.2");
+ user_pref("browser.syncPromoViewsLeft", 1);

@@ -1,0 +1,10 @@
+--- /mnt/live/memory/bundles/04-kde.sb/etc/kde/kdm/kdmrc	2013-01-24 07:34:36.000000000 +0000
++++ /etc/kde/kdm/kdmrc	2013-04-02 09:15:52.000000000 +0000
+@@ -9,6 +9,7 @@
+ Session=/usr/share/config/kdm/Xsession
+ ClientLogFile=
+ ClientLogFallback=/tmp
++ServerArgsLocal=-nolisten tcp
+ 
+ [X-*-Greeter]
+ AntiAliasing=false

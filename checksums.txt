@@ -11,7 +11,6 @@ e48b4b9aa20459401fe257cb6f8c8a07  slax/boot/bootinst.bat
 72789a40fa4737d6c4b8f81e56bbb450  slax/boot/memtest
 c8f10abc4097c20cf67f0f2b0fbb4407  slax/boot/help.txt
 4d0f29fa818db184e438f0e3afe79555  slax/boot/initrfs.img
-1d1b7c6227cfd2677c4ed422fa33c4e4  slax/boot/isolinux.bin
 5efe3cefc1f79ebb917879e4088b69e6  slax/boot/syslinux.cfg
 8757afed59ac265099e36b8ccc09c001  slax/boot/syslinux.com
 8de87f5c88d8270dc69174b64de1d00a  slax/boot/samedisk.vbs

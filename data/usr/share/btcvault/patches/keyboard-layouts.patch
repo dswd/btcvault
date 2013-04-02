@@ -1,0 +1,11 @@
+--- /mnt/live/memory/bundles/04-kde.sb/root/.kde/share/config/kxkbrc	2013-01-26 14:24:04.000000000 +0000
++++ /root/.kde/share/config/kxkbrc	2013-04-02 09:15:52.000000000 +0000
+@@ -1,6 +1,7 @@
++
+ [Layout]
+ DisplayNames=,
+-LayoutList=us
++LayoutList=us,de,fr,es
+ LayoutLoopCount=-1
+ Model=pc101
+ ResetOldOptions=false

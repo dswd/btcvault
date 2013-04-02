@@ -1,0 +1,19 @@
+--- /mnt/live/memory/bundles/07-ffox.sb/root/.mozilla/firefox/z3mlc794.default/pluginreg.dat	2013-01-24 09:48:27.000000000 +0000
++++ /root/.mozilla/firefox/z3mlc794.default/pluginreg.dat	2013-04-02 12:19:22.001006115 +0000
+@@ -2,13 +2,13 @@
+ 
+ [HEADER]
+ Version:0.15:$
+-Arch:x86_64-gcc3:$
++Arch:x86-gcc3:$
+ 
+ [PLUGINS]
+ libflashplayer.so:$
+-/usr/lib64/mozilla/plugins/libflashplayer.so:$
++/usr/lib/mozilla/plugins/libflashplayer.so:$
+ :$
+-1351552978000:0:1:$
++1351553295000:0:0:$
+ Shockwave Flash 11.2 r202:$
+ Shockwave Flash:$
+ 2
