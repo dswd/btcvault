@@ -1,0 +1,60 @@
+#define TITLE BTC Vault - Releases
+#define SECTION_OBTAIN
+#include <header.html>
+
+LEFT_SIDE
+
+RIGHT_SIDE
+
+<h2>External links</h2>
+MENU_BEGIN
+menu_entry(EXTERNAL All release files,https://mega.co.nz/#F!1MtUnBwJ!GJAM83Obuel7rD9IZcZ6xQ)
+MENU_END
+
+CONTENT
+
+<h1>BTC Vault Releases</h1>
+
+
+<h2>BTC Vault 0.2: Bugfix &amp; feature release (2013-04-06)</h2>
+
+<h3>Changes</h3>
+<ul>
+  <li>Added local copy of bitaddress.org with shortcut on desktop and in menu</li>
+  <li>Disabled flash plugin by default</li>
+  <li>Disabled Xorg server network functionality</li>
+  <li>Added 7z encryption capability</li>
+</ul>
+
+<h3>Release files</h3>
+<ul>
+  <li><a href="https://mega.co.nz/#!dJNjQSpQ!bT7RITNZmxcleLaO7rlowTn_7ttFVuAbWEVqu5Y3oRg">btcvault-0.2.iso</a> (for installation on CD-Rom, 232 MiB)</li>
+  <li><a href="https://mega.co.nz/#!VVMXQbwT!MhpOuEIWlri8TfZZDN5eLTXnWiZVeBSRgam57jh-hNA">btcvault-0.2.zip</a> (for installation on USB stick, 232 MiB)</li>
+  <li><a href="https://mega.co.nz/#!ZItl3AZI!MqL8YVxH3QL_TJbK7UF2ona2Qp0sHbIe3N1BqbQgekI">9999-btcvault.sb</a> (for usage on a Slax system, 0.5 MiB)</li>
+  <li><a href="https://mega.co.nz/#!UNtzTYSD!Dbxs1lj9zGuwR6nX-nO8OF-lfJhWPqRLzh0FMdCi4LU">9998-electrum.sb</a> (for usage on a Slax system, 0.4 MiB)</li>
+  <li><a href="btcvault-0.2-checksums.txt">Release checksums</a></li>
+</ul>
+
+
+<h2>BTC Vault 0.1: Initial release (2013-03-31)</h2>
+
+<h3>Changes</h3>
+<ul>
+  <li>Electrum software, connected with .wallet files, link on desktop</li>
+  <li>Script to create new wallets, entry in contect menu</li>
+  <li>Links to Blockchain.org and local copy of Brainwallet.org</li>
+  <li>Added <tt>bitcoin:</tt> url-scheme to firefox</li>
+  <li>Home folder icon on desktop and in panel</li>
+  <li>Keyboard chooser got German, French and Spanish layouts</li>
+</ul>
+
+<h3>Release files</h3>
+<ul>
+  <li><a href="https://mega.co.nz/#!8ZcTQR5Y!YZs5bCLTy3354HhzAvQ6ehdU9rRAPtk2vIabyTnksRQ">btcvault-0.1.iso</a> (for installation on CD-Rom, 230 MiB)</li>
+  <li><a href="https://mega.co.nz/#!UZk0zRjS!ds2bZXuuv6838HNJcWBlOxfH-hISYirXWYip1BHpbjc">btcvault-0.1.zip</a> (for installation on USB stick, 230 MiB)</li>
+  <li><a href="https://mega.co.nz/#!JdVG2KIJ!Jh2csztlg-NV-XC5jWi14Axu2nF-uD6MZaL2Zbtkq00">9999-btcvault.sb</a> (for usage on a Slax system, 0.3 MiB)</li>
+  <li><a href="https://mega.co.nz/#!wIsQAYJA!Pps6rBcDbEiXv2vNUu7RAQ-k4q4LGEJJ76e4Klflnoo">2692-electrum.sb</a> (for usage on a Slax system, 0.4 MiB)</li>
+  <li><a href="btcvault-0.1-checksums.txt">Release checksums</a></li>
+</ul>
+
+#include <footer.html>

@@ -1,4 +1,4 @@
-#define TITLE BTC Vault - Slax Bitcoin Distribution
+#define TITLE BTC Vault - Bitcoin Introduction
 #define SECTION_BITCOIN
 #include <header.html>
 
