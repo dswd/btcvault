@@ -1,7 +1,7 @@
 SLAX_VERSION=7.0.8
 SLAX_ARCH=i486
 SLAX_FILE=slax-English-US-$(SLAX_VERSION)-$(SLAX_ARCH).zip
-SLAX_MODULES_DOWNLOAD=1188-python 2354-sip 2356-pyqt 473-dbus-python
+SLAX_MODULES_DOWNLOAD=1188-python 2354-sip 2356-pyqt 473-dbus-python 2235-p7zip
 SLAX_MODULES_DOWNLOAD_FILES=$(foreach mod, $(SLAX_MODULES_DOWNLOAD), build/slax/$(mod).sb)
 SLAX_MODULES_BUILD=9998-electrum 9999-btcvault
 SLAX_MODULES_BUILD_FILES=$(foreach mod, $(SLAX_MODULES_BUILD), build/slax/$(mod).sb)

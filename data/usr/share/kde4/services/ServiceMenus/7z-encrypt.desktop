@@ -1,0 +1,12 @@
+[Desktop Action EncryptCompress]
+Exec=7z-encrypt.sh '%u'
+Name=Encrypt & Compress
+Icon=document-encrypt
+
+[Desktop Entry]
+Type=Service
+ServiceTypes=all/all
+X-KDE-ServiceTypes=KonqPopupMenu/Plugin
+X-KDE-Priority=TopLevel
+Actions=EncryptCompress
+ 
