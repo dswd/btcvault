@@ -7,5 +7,6 @@ Icon=/usr/share/app-install/icons/electrum.png
 Type=Service
 ServiceTypes=inode/folder
 X-KDE-ServiceTypes=KonqPopupMenu/Plugin,inode/directory
+X-KDE-Priority=TopLevel
 Actions=NewWallet
  
