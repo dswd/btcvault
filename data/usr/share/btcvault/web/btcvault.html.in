@@ -21,6 +21,7 @@ Some additional modifications include:
       Electrum.</li>
   <li>You can create new wallets by using the action from the folder context menu or the desktop
       icon.</li>
+  <li>You can create encrypted 7zip archives by using the action from the file context menu.</li>
   <li>Firefox supports the <tt>bitcoin:</tt> url-scheme.</li>
   <li>Links on the desktop lead to Blockchain.org and local copies of Brainwallet.org and Bitaddress.org.</li>
   <li>Links on the desktop and the panel lead to the home directory.</li>
@@ -40,12 +41,21 @@ Some additional modifications include:
 
 <h2>Changelog</h2>
 <ul>
-  <li>0.1: Initial release</li>
+  <li>0.1: Initial release
+    <ul>
+      <li>Electrum software, connected with .wallet files, link on desktop</li>
+      <li>Script to create new wallets, entry in contect menu</li>
+      <li>Links to Blockchain.org and local copy of Brainwallet.org</li>
+      <li>Added <tt>bitcoin:</tt> url-scheme to firefox</li>
+      <li>Home folder icon on desktop and in panel</li>
+      <li>Keyboard chooser got German, French and Spanish layouts</li>
+    </ul></li>
   <li>NEXT: 
     <ul>
       <li>Added local copy of bitaddress.org with shortcut on desktop and in menu</li>
       <li>Disabled flash plugin by default</li>
-      <li>Disabled Xorg server functionality</li>
+      <li>Disabled Xorg server network functionality</li>
+      <li>Added 7z encryption capability</li>
     </ul></li>
 </ul>
 
