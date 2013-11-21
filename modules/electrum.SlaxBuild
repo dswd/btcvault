@@ -2,7 +2,7 @@
 . /usr/share/slax/slaxbuildlib
 
 SLAX_BUNDLE_NAME="electrum"
-SLAX_BUNDLE_VERSION="1.7.2"
+SLAX_BUNDLE_VERSION="1.9.4"
 SLAX_BUNDLE_DESCRIPTION="Electrum bitcoin client"
 SLAX_BUNDLE_CATEGORIES="network,utilities,security"
 SLAX_BUNDLES_REQUIRED="python pyqt"
@@ -10,7 +10,7 @@ SLAX_BUNDLES_REQUIRED_TO_COMPILE_ONLY=""
 SLAX_BUNDLE_MAINTAINER_NAME="Dennis Schwerdel"
 SLAX_BUNDLE_MAINTAINER_EMAIL="schwerdel@googlemail.com"
 
-ECDSA_VERSION=0.8
+ECDSA_VERSION=0.10
 SLOWAES_VERSION=0.1a1
 
 SLAX_BUNDLE_SOURCE_DOWNLOAD[0]="http://download.electrum.org/download/Electrum-$SLAX_BUNDLE_VERSION.tar.gz"
@@ -21,8 +21,8 @@ check_variables_for_errors
 download_all_sources
 
 md5sum --check <<EOF
-510e66e9ac2d957d5286889b050d2478  Electrum-1.7.2.tar.gz
-a3575705afb24d7cbc1694960d3965b1  ecdsa-0.8.tar.gz
+c661b443ac52bb576282a43c6de3a890  Electrum-1.9.4.tar.gz
+e95941b3bcbf1726472bb724d7478551  ecdsa-0.10.tar.gz
 eafee95a788a795403e972a35e80ce4f  slowaes-0.1a1.tar.gz
 EOF
 
@@ -31,11 +31,11 @@ init_bundle_target_dir
 activate_required_bundles
 
 patch -p0 <<EOF
---- electrum.orig 2013-03-28 10:29:21.000000000 +0000
-+++ Electrum-${SLAX_BUNDLE_VERSION}/electrum 2013-03-28 10:46:37.926152510 +0000
-@@ -83,6 +83,22 @@
-     parser.add_option("-u", "--usb", dest="bitkey", action="store_true", help="Turn on support for hardware wallets (EXPERIMENTAL)")
-     return parser
+--- electrum.orig       2013-11-12 22:52:00.000000000 +0000
++++ Electrum-${SLAX_BUNDLE_VERSION}/electrum 2013-11-21 22:30:34.444001594 +0000
+@@ -114,6 +114,22 @@
+     elif result is not None:
+         util.print_json(result)
  
 +def ensurePersistent(path):
 +    path = os.path.abspath(path)
@@ -56,14 +56,25 @@ patch -p0 <<EOF
  
  if __name__ == '__main__':
  
-@@ -105,6 +121,7 @@
+@@ -182,6 +198,7 @@
  
-     config = SimpleConfig(config_options)
-     wallet = Wallet(config)
-+    ensurePersistent(config.path)
+     if cmd.requires_wallet:
+         wallet = Wallet(storage)
++        ensurePersistent(config.path)
+     else:
+         wallet = None
  
+--- setup.py.orig       2013-11-21 22:37:44.472002333 +0000
++++ Electrum-${SLAX_BUNDLE_VERSION}/setup.py    2013-11-21 22:37:56.986002355 +0000
+@@ -2,7 +2,7 @@
  
-     if len(args)==0:
+ # python setup.py sdist --format=zip,gztar
+ 
+-from setuptools import setup
++from distutils.core import setup
+ import os, sys, platform, imp
+ 
+ version = imp.load_source('version', 'lib/version.py')
 EOF
 
 cd ${SLAX_CURRENT_BUILDSCRIPT_DIR}/slowaes-$SLOWAES_VERSION
