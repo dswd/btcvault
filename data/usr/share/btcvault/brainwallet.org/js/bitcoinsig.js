@@ -2,9 +2,19 @@
     bitcoinsig.js - sign and verify messages with bitcoin address (public domain)
 */
 
+function msg_numToVarInt(i) {
+    if (i < 0xfd) {
+      return [i];
+    } else if (i <= 0xffff) {
+      return [0xfd, i & 255, i >>> 8]; // BitcoinQT wants big endian here
+    } else {
+        throw ("message too large");
+    }
+}
+
 function msg_bytes(message) {
     var b = Crypto.charenc.UTF8.stringToBytes(message);
-    return Bitcoin.Util.numToVarInt(b.length).concat(b);
+    return msg_numToVarInt(b.length).concat(b);
 }
 
 function msg_digest(message) {
@@ -12,7 +22,7 @@ function msg_digest(message) {
     return Crypto.SHA256(Crypto.SHA256(b, {asBytes:true}), {asBytes:true});
 }
 
-function verify_message(signature, message) {
+function verify_message(signature, message, addrtype) {
     try {
         var sig = Crypto.util.base64ToBytes(signature);
     } catch(err) {
@@ -32,7 +42,7 @@ function verify_message(signature, message) {
     if (nV < 27 || nV >= 35)
         return false;
     if (nV >= 31) {
-        compressed = true
+        compressed = true;
         nV -= 4;
     }
     var recid = BigInteger.valueOf(nV - 27);
@@ -58,15 +68,18 @@ function verify_message(signature, message) {
 
     var public_key = Q.getEncoded(compressed);
     var addr = new Bitcoin.Address(Bitcoin.Util.sha256ripe160(public_key));
+
+    addr.version = addrtype ? addrtype : 0;
     return addr.toString();
 }
 
-function sign_message(private_key, message, compressed) {
+function sign_message(private_key, message, compressed, addrtype) {
     if (!private_key)
         return false;
 
     var signature = private_key.sign(msg_digest(message));
-    var address = private_key.getBitcoinAddress();
+    var address = new Bitcoin.Address(private_key.getPubKeyHash());
+    address.version = addrtype ? addrtype : 0;
 
     //convert ASN.1-serialized signature to bitcoin-qt format
     var obj = Bitcoin.ECDSA.parseSig(signature);
@@ -80,7 +93,7 @@ function sign_message(private_key, message, compressed) {
             nV += 4;
         sequence[0] = nV;
         var sig = Crypto.util.bytesToBase64(sequence);
-        if (verify_message(sig, message) == address)
+        if (verify_message(sig, message, addrtype) == address)
             return sig;
     }
 
@@ -88,10 +101,10 @@ function sign_message(private_key, message, compressed) {
 }
 
 function bitcoinsig_test() {
-    k = '5JeWZ1z6sRcLTJXdQEDdB986E6XfLAkj9CgNE4EHzr5GmjrVFpf'
-    a = '17mDAmveV5wBwxajBsY7g1trbMW1DVWcgL'
-    s = 'HDiv4Oe9SjM1FFVbKk4m3N34efYiRgkQGGoEm564ldYt44jHVTuX23+WnihNMi4vujvpUs1M529P3kftjDezn9E='
-    m = 'test message'
+    var k = '5JeWZ1z6sRcLTJXdQEDdB986E6XfLAkj9CgNE4EHzr5GmjrVFpf';
+    var a = '17mDAmveV5wBwxajBsY7g1trbMW1DVWcgL';
+    var s = 'HDiv4Oe9SjM1FFVbKk4m3N34efYiRgkQGGoEm564ldYt44jHVTuX23+WnihNMi4vujvpUs1M529P3kftjDezn9E=';
+    var m = 'test message';
     payload = Bitcoin.Base58.decode(k);
     secret = payload.slice(1, 33);
     compressed = payload.length == 38;

@@ -8,6 +8,10 @@
     var TIMEOUT = 600;
     var timeout = null;
 
+    var PUBLIC_KEY_VERSION = 0;
+    var PRIVATE_KEY_VERSION = 0x80;
+    var ADDRESS_URL_PREFIX = 'http://blockchain.info/address/'
+
     function parseBase58Check(address) {
         var bytes = Bitcoin.Base58.decode(address);
         var end = bytes.length - 4;
@@ -122,25 +126,21 @@
     }
 
     function setErrorState(field, err, msg) {
-        group = field.closest('.control-group');
-
+        var group = field.closest('.controls');
         if (err) {
-            group.addClass('error');
+            group.addClass('has-error');
+            group.attr('title',msg);
         } else {
-            group.removeClass('error');
-        }
-
-        var e = group.find('.errormsg');
-        if (e) {
-            e.text(msg||'');
+            group.removeClass('has-error');
+            group.attr('title','');
         }
     }
 
-    function gen_random() {
+    function genRandom() {
         $('#pass').val('');
         $('#hash').focus();
         gen_from = 'hash';
-        $('#from_hash').button('toggle');
+        $('#from_hash').click();
         update_gen();
         var bytes = Crypto.util.randomBytes(32);
         $('#hash').val(Crypto.util.bytesToHex(bytes));
@@ -198,7 +198,6 @@
             gen_pt = curve.getG().multiply(eckey.priv);
             gen_eckey.pub = getEncoded(gen_pt, gen_compressed);
             gen_eckey.pubKeyHash = Bitcoin.Util.sha256ripe160(gen_eckey.pub);
-            var addr = eckey.getBitcoinAddress();
             setErrorState($('#hash'), false);
         } catch (err) {
             //console.info(err);
@@ -228,18 +227,20 @@
 
         var hash160 = eckey.getPubKeyHash();
 
-        var addr = eckey.getBitcoinAddress();
-        $('#addr').val(addr);
-
         var h160 = Crypto.util.bytesToHex(hash160);
         $('#h160').val(h160);
+
+        var addr = new Bitcoin.Address(hash160);
+        addr.version = PUBLIC_KEY_VERSION;
+        $('#addr').val(addr);
 
         var payload = hash;
 
         if (compressed)
             payload.push(0x01);
 
-        var sec = new Bitcoin.Address(payload); sec.version = 128;
+        var sec = new Bitcoin.Address(payload);
+        sec.version = PRIVATE_KEY_VERSION;
         $('#sec').val(sec);
 
         var pub = Crypto.util.bytesToHex(getEncoded(gen_pt, compressed));
@@ -248,20 +249,15 @@
         var der = Crypto.util.bytesToHex(getDER(eckey, compressed));
         $('#der').val(der);
 
-        var img = '<img src="http://chart.apis.google.com/chart?cht=qr&chs=255x250&chl='+addr+'">';
+        var qrCode = qrcode(3, 'M');
+        var text = $('#addr').val();
+        text = text.replace(/^[\s\u3000]+|[\s\u3000]+$/g, '');
+        qrCode.addData(text);
+        qrCode.make();
 
-        if (true) {
-            var qr = qrcode(3, 'M');
-            var text = $('#addr').val();
-            text = text.replace(/^[\s\u3000]+|[\s\u3000]+$/g, '');
-            qr.addData(text);
-            qr.make();
-            img = qr.createImgTag(5);
-        }
-
-        var url = 'http://blockchain.info/address/'+addr;
-        $('#qr').html('<a href="'+url+'" title="'+addr+'" target="_blank">'+img+'</a>');
-        $('#qr_addr').text($('#addr').val());
+        $('#genAddrQR').html(qrCode.createImgTag(4));
+        $('#genAddrURL').attr('href', ADDRESS_URL_PREFIX+addr);
+        $('#genAddrURL').attr('title', addr);
     }
 
 
@@ -309,8 +305,8 @@
             return;
         };
 
-        if (version != 128) {
-            setErrorState($('#sec'), true, 'Invalid private key version (must be 128)');
+        if (version != PRIVATE_KEY_VERSION) {
+            setErrorState($('#sec'), true, 'Invalid private key version');
             return;
         } else if (payload.length < 32) {
             setErrorState($('#sec'), true, 'Invalid payload (must be 32 or 33 bytes)');
@@ -332,6 +328,20 @@
 
         timeout = setTimeout(generate, TIMEOUT);
     }
+
+    function genRandomPass() {
+        // chosen by fair dice roll
+        // guaranted to be random
+        $('#pass').val('correct horse battery staple');
+        $('#from_pass').button('toggle');
+        $('#pass').focus();
+        gen_from = 'pass';
+        update_gen();
+        calc_hash();
+        generate();
+    }
+
+    // --- converter ---
 
     var from = 'hex';
     var to = 'hex';
@@ -402,7 +412,7 @@
     function update_toolbar(enc) {
         var reselect = false;
         $.each($('#enc_from').children(), function() {
-            var id = $(this).attr('id').substring(5);
+            var id = $(this).children().attr('id').substring(5);
             var disabled = (enc && enc.indexOf(id) == -1);
             if (disabled && $(this).hasClass('active')) {
                 $(this).removeClass('active');
@@ -411,13 +421,19 @@
             $(this).attr('disabled', disabled);
         });
         if (enc && enc.length > 0 && reselect) {
-            $('#from_' + enc[0]).addClass('active');
+            $('#from_' + enc[0]).click();//addClass('active');
             from = enc[0];
         }
     }
 
+    function rot13(str) {
+        return str.replace(/[a-zA-Z]/g, function(c) {
+          return String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26);
+        });
+    }
+
     function enct(id) {
-        return $('#from_'+id).text();
+        return $('#from_'+id).parent().text();
     }
 
     function translate() {
@@ -425,8 +441,11 @@
         var str = $('#src').val();
 
         if (str.length == 0) {
-            update_toolbar(null);
-            return;
+          update_toolbar(null);
+          $('#hint_from').text('');
+          $('#hint_to').text('');
+          $('#dest').val('');
+          return;
         }
 
         text = str;
@@ -462,7 +481,7 @@
             if (to == 'base58') {
                 if (bytes.length == 20 || bytes.length == 32) {
                     var addr = new Bitcoin.Address(bytes);
-                    addr.version = bytes.length == 32 ? 128 : 0;
+                    addr.version = bytes.length == 32 ? PRIVATE_KEY_VERSION : PUBLIC_KEY_VERSION;
                     text = addr.toString();
                     ver = 'Check ver.' + addr.version;
                 } else {
@@ -478,7 +497,9 @@
                 text = mn_encode(Crypto.util.bytesToHex(bytes));
             } else if (to == 'base64') {
                 text = Crypto.util.bytesToBase64(bytes);
-            } 
+            } else if (to == 'rot13') {
+                text = rot13(str);
+            }
         }
 
         $('#hint_from').text(enct(from) + type + ' (' + bytes.length + ' byte' + (bytes.length == 1 ? ')' : 's)'));
@@ -504,211 +525,210 @@
     }
 
     // --- chain ---
-    var chain_mode = 'csv';
-    var addresses = [];
-    var chain_range = parseInt($('#range').val());
-    var chain_type = 'chain_armory';
+    var chMode = 'csv';
+    var chAddrList = [];
+    var chRange = 1;
+    var chType = 'armory';
 
-    function onChangeMethod() {
+    function chOnChangeType() {
         var id = $(this).attr('id');
 
-        if (chain_type != id) {
-            $('#seed').val('');
-            $('#expo').val('');
-            $('#memo').val('');
-            $('#progress').text('');
-            $('#chain').text('');
+        if (chType != id) {
+            $('#chCode').val('');
+            $('#chRoot').val('');
+            $('#chBackup').val('');
+            $('#chMsg').text('');
+            $('#chList').text('');
             chOnStop();
         }
 
-        $('#elChange').attr('disabled', id != 'chain_electrum');
+        $('#chChange').attr('disabled', id != 'electrum');
 
-        chain_type = id;
+        chType = id;
     }
 
-    function onChangeFormat() {
-        chain_mode = $(this).attr('id');
-        update_chain();
+    function chOnChangeFormat() {
+        chMode = $(this).attr('id');
+        chUpdate();
     }
 
-    function addr_to_csv(i, r) {
+    function chAddrToCSV(i, r) {
         return i + ', "' + r[0] +'", "' + r[1] +'"\n';
     }
 
-    function update_chain() {
-        if (addresses.length == 0)
+    function chUpdate() {
+        if (chAddrList.length == 0)
             return;
         var str = '';
-        if (chain_mode == 'csv') {
-            for (var i = 0; i < addresses.length; i++)
-                str += addr_to_csv(i+1, addresses[i]);
+        if (chMode == 'csv') {
+            for (var i = 0; i < chAddrList.length; i++)
+                str += chAddrToCSV(i+1, chAddrList[i]);
 
-        } else if (chain_mode == 'json') {
+        } else if (chMode == 'json') {
 
             var w = {};
             w['keys'] = [];
-            for (var i = 0; i < addresses.length; i++)
-                w['keys'].push({'addr':addresses[i][0],'sec':addresses[i][1]});
+            for (var i = 0; i < chAddrList.length; i++)
+                w['keys'].push({'addr':chAddrList[i][0],'sec':chAddrList[i][1]});
             str = JSON.stringify(w, null, 4);
         }
-        $('#chain').text(str);
+        $('#chList').text(str);
 
-        chain_range = parseInt($('#range').val());
-        if (addresses.length >= chain_range)
+        chRange = parseInt($('#chRange').val());
+
+        var c = (chType == 'electrum') ? parseInt($('#chChange').val()) : 0;
+
+        if (chAddrList.length >= chRange+c)
             chOnStop();
 
     }
 
-    function onChangeSeed() {
-        $('#expo').val('');
-        $('#progress').text('');
+    function chOnChangeCode() {
+        $('#chRoot').val('');
+        $('#chMsg').text('');
         chOnStop();
-        $('#memo').val( mn_encode(seed) );
+        $('#chBackup').val( mn_encode(chRoot) );
         clearTimeout(timeout);
-        timeout = setTimeout(chain_generate, TIMEOUT);
+        timeout = setTimeout(chGenerate, TIMEOUT);
     }
 
-    function onChangeMemo() {
-        var str =  $('#memo').val();
+    function chOnChangeBackup() {
+        var str =  $('#chBackup').val();
 
         if (str.length == 0) {
             chOnStop();
+            $('#chCode').val('');
+            $('#chRoot').val('');
+            $('#chBackup').val('');
+            $('#chMsg').text('');
+            $('#chList').text('');
             return;
         }
 
-        if (chain_type == 'chain_electrum') {
+        if (chType == 'electrum') {
             if (issubset(mn_words, str))  {
                 var seed = mn_decode(str);
-                $('#seed').val(seed);
+                $('#chCode').val(seed);
             }
         }
 
-        if (chain_type == 'chain_armory') {
+        if (chType == 'armory') {
             var keys = armory_decode_keys(str);
             if (keys != null) {
                 var cc = keys[1];
                 var pk = keys[0];
-                $('#seed').val(Crypto.util.bytesToHex(cc));
-                $('#expo').val(Crypto.util.bytesToHex(pk));
+                $('#chCode').val(Crypto.util.bytesToHex(cc));
+                $('#chRoot').val(Crypto.util.bytesToHex(pk));
             }
         }
 
         clearTimeout(timeout);
-        timeout = setTimeout(chain_generate, TIMEOUT);
+        timeout = setTimeout(chGenerate, TIMEOUT);
     }
 
-    function chOnPlay() {
+    function chOnRandom() {
         var cc = Crypto.util.randomBytes(32);
         var pk = Crypto.util.randomBytes(32);
 
-        if (chain_type == 'chain_armory') {
-            $('#seed').val(Crypto.util.bytesToHex(cc));
-            $('#expo').val(Crypto.util.bytesToHex(pk));
-            var codes = armory_encode_keys(pk, cc);
-            $('#memo').val(codes);
+        if (chType == 'armory') {
+            $('#chCode').val(Crypto.util.bytesToHex(cc));
+            $('#chRoot').val(Crypto.util.bytesToHex(pk));
+            $('#chBackup').val(armory_encode_keys(pk, cc));
         }
 
-        if (chain_type == 'chain_electrum') {
+        if (chType == 'electrum') {
             var seed = Crypto.util.bytesToHex(pk.slice(0,16));
             //nb! electrum doesn't handle trailing zeros very well
             if (seed.charAt(0) == '0') seed = seed.substr(1);
-            $('#seed').val(seed);
-            var codes = mn_encode(seed);
-            $('#memo').val(codes);
+            $('#chCode').val(seed);
+            $('#chBackup').val(mn_encode(seed));
         }
-        chain_generate();
+        chGenerate();
     }
 
     function chOnStop() {
         Armory.stop();
         Electrum.stop();
-        $('#chStop').hide();
-        $('#chPlay').show();
-
-        if (chain_type == 'chain_electrum') {
-            $('#progress').text('');
+        if (chType == 'electrum') {
+            $('#chMsg').text('');
         }
     }
 
-    function onChangeChange() {
-        chain_range = parseInt($('#range').val());
-        if (addresses.length >= chain_range)
-            onChangeRange();
-    }
-
-    function onChangeRange() {
-        chain_range = parseInt($('#range').val());
+    function chOnChangeRange()
+    {
+        if ( chAddrList.length==0 )
+          return;
         clearTimeout(timeout);
-        timeout = setTimeout(update_chain_range, TIMEOUT);
+        timeout = setTimeout(chUpdateRange, TIMEOUT);
     }
 
-    function addr_callback(r) {
-        addresses.push(r);
-        $('#chain').append(addr_to_csv(addresses.length,r));
+    function chCallback(r) {
+        chAddrList.push(r);
+        $('#chList').append(chAddrToCSV(chAddrList.length,r));
     }
 
-    function electrum_seed_update(r, seed) {
-        $('#progress').text('key stretching: ' + r + '%');
-        $('#expo').val(Crypto.util.bytesToHex(seed));
+    function chElectrumUpdate(r, seed) {
+        $('#chMsg').text('key stretching: ' + r + '%');
+        $('#chRoot').val(Crypto.util.bytesToHex(seed));
     }
 
-    function electrum_seed_success(privKey) {
-        $('#progress').text('');
-        $('#expo').val(Crypto.util.bytesToHex(privKey));
-        var addChange = $('#elChange').is(':checked');
-        Electrum.gen(chain_range, addr_callback, update_chain, addChange);
+    function chElectrumSuccess(privKey) {
+        $('#chMsg').text('');
+        $('#chRoot').val(Crypto.util.bytesToHex(privKey));
+        var addChange = parseInt($('#chChange').val());
+        Electrum.gen(chRange, chCallback, chUpdate, addChange);
     }
 
-    function update_chain_range() {
-        chain_range = $('#range').val();
+    function chUpdateRange() {
+        chRange = parseInt($('#chRange').val());
+        chAddrList = [];
 
-        addresses = [];
-        $('#chain').text('');
+        $('#chList').text('');
 
-        if (chain_type == 'chain_electrum') {
-            var addChange = $('#elChange').is(':checked');
-            Electrum.gen(chain_range, addr_callback, update_chain, addChange);
+        if (chType == 'electrum') {
+            var addChange = parseInt($('#chChange').val());
+            Electrum.stop();
+            Electrum.gen(chRange, chCallback, chUpdate, addChange);
         }
 
-        if (chain_type == 'chain_armory') {
-            var codes = $('#memo').val();
-            Armory.gen(codes, chain_range, addr_callback, update_chain);
+        if (chType == 'armory') {
+            var codes = $('#chBackup').val();
+            Armory.gen(codes, chRange, chCallback, chUpdate);
         }
     }
 
-    function chain_generate() {
+    function chGenerate() {
         clearTimeout(timeout);
 
-        var seed = $('#seed').val();
-        var codes = $('#memo').val();
+        var seed = $('#chCode').val();
+        var codes = $('#chBackup').val();
 
-        addresses = [];
-        $('#progress').text('');
-        $('#chain').text('');
+        chAddrList = [];
+
+        $('#chMsg').text('');
+        $('#chList').text('');
 
         Electrum.stop();
 
-        if (chain_type == 'chain_electrum') {
+        if (chType == 'electrum') {
            if (seed.length == 0)
                return;
-            Electrum.init(seed, electrum_seed_update, electrum_seed_success);
+            Electrum.init(seed, chElectrumUpdate, chElectrumSuccess);
         }
 
-        if (chain_type == 'chain_armory') {
-            var uid = Armory.gen(codes, chain_range, addr_callback, update_chain);
+        if (chType == 'armory') {
+            var uid = Armory.gen(codes, chRange, chCallback, chUpdate);
             if (uid)
-                $('#progress').text('uid: ' + uid);
+                $('#chMsg').text('uid: ' + uid);
             else
                 return;
         }
-
-        $('#chPlay').hide();
-        $('#chStop').show();
     }
 
     // -- transactions --
 
     var txType = 'txBCI';
+    var txFrom = 'txFromSec';
 
     function txGenSrcAddr() {
         var sec = $('#txSec').val();
@@ -728,20 +748,26 @@
             var pt = curve.getG().multiply(eckey.priv);
             eckey.pub = getEncoded(pt, compressed);
             eckey.pubKeyHash = Bitcoin.Util.sha256ripe160(eckey.pub);
-            addr = eckey.getBitcoinAddress();
+            addr = new Bitcoin.Address(eckey.getPubKeyHash());
+            addr.version = (version-128)&255;
         } catch (err) {
         }
 
         $('#txAddr').val(addr);
         $('#txBalance').val('0.00');
 
-        if (addr != "")
+        if (addr != "" && txFrom=='txFromSec')
             txGetUnspent();
     }
 
     function txOnChangeSec() {
         clearTimeout(timeout);
         timeout = setTimeout(txGenSrcAddr, TIMEOUT);
+    }
+
+    function txOnChangeAddr() {
+        clearTimeout(timeout);
+        timeout = setTimeout(txGetUnspent, TIMEOUT);
     }
 
     function txSetUnspent(text) {
@@ -754,7 +780,8 @@
         var fval = Bitcoin.Util.formatValue(value);
         var fee = parseFloat($('#txFee').val());
         $('#txBalance').val(fval);
-        $('#txValue').val(fval - fee);
+        var value = Math.floor((fval-fee)*1e8)/1e8;
+        $('#txValue').val(value);
         txRebuild();
     }
 
@@ -779,19 +806,27 @@
         var url = (txType == 'txBCI') ? 'http://blockchain.info/unspent?address=' + addr :
             'http://blockexplorer.com/q/mytransactions/' + addr;
 
-        url = prompt('Download transaction history:', url);
+        url = prompt('Press OK to download transaction history:', url);
         if (url != null && url != "") {
             $('#txUnspent').val('');
             tx_fetch(url, txParseUnspent);
+        } else {
+          txSetUnspent($('#txUnspent').val());
         }
     }
 
     function txOnChangeJSON() {
         var str = $('#txJSON').val();
-        var sendTx = TX.fromBBE(str);
-        var bytes = sendTx.serialize();
-        var hex = Crypto.util.bytesToHex(bytes);
-        $('#txHex').val(hex);
+        try {
+          var sendTx = TX.fromBBE(str);
+          $('txJSON').removeClass('has-error');
+          var bytes = sendTx.serialize();
+          var hex = Crypto.util.bytesToHex(bytes);
+          $('#txHex').val(hex);
+          setErrorState($('#txJSON'), false, '');
+        } catch (err) {
+          setErrorState($('#txJSON'), true, 'syntax error');
+        }
     }
 
     function txOnChangeHex() {
@@ -845,7 +880,7 @@
         //url = 'http://bitsend.rowit.co.uk/?transaction=' + tx;
         url = 'http://blockchain.info/pushtx';
         postdata = 'tx=' + tx;
-        url = prompt(r + 'Send transaction:', url);
+        url = prompt(r + 'Press OK to send transaction to:', url);
         if (url != null && url != "") {
             tx_fetch(url, txSent, txSent, postdata);
         }
@@ -899,8 +934,31 @@
             var txJSON = TX.toBBE(sendTx);
             var buf = sendTx.serialize();
             var txHex = Crypto.util.bytesToHex(buf);
+            setErrorState($('#txJSON'), false, '');
             $('#txJSON').val(txJSON);
             $('#txHex').val(txHex);
+        } catch(err) {
+            $('#txJSON').val('');
+            $('#txHex').val('');
+        }
+    }
+
+    function txSign() {
+        if (txFrom=='txFromSec')
+        {
+          txRebuild();
+          return;
+        }
+
+        var str = $('#txJSON').val();
+        TX.removeOutputs();
+        var sendTx = TX.fromBBE(str);
+
+        try {
+            sendTx = TX.resign(sendTx);
+            $('#txJSON').val(TX.toBBE(sendTx));
+            $('#txHex').val(Crypto.util.bytesToHex(sendTx.serialize()));
+            $('#txFee').val(Bitcoin.Util.formatValue(TX.getFee(sendTx)));
         } catch(err) {
             $('#txJSON').val('');
             $('#txHex').val('');
@@ -935,7 +993,28 @@
 
     function txChangeType() {
         txType = $(this).attr('id');
-        txGetUnspent();
+    }
+
+    function txChangeFrom() {
+      txFrom = $(this).attr('id');
+      var bFromKey = txFrom=='txFromSec' || txFrom=='txFromPass';
+      $('#txJSON').attr('readonly', txFrom!='txFromJSON');
+      $('#txHex').attr('readonly', txFrom!='txFromRaw');
+      $('#txFee').attr('readonly', !bFromKey);
+      $('#txAddr').attr('readonly', !bFromKey);
+      $('#txBalance').attr('readonly', !bFromKey);
+
+      $.each($(document).find('.txCC'), function() {
+        $(this).find('#txDest').attr('readonly', !bFromKey);
+        $(this).find('#txValue').attr('readonly', !bFromKey);
+      });
+
+      if ( txFrom=='txFromRaw' )
+        $('#txHex').focus();
+      else if ( txFrom=='txFromJSON' )
+        $('#txJSON').focus();
+      else if ( bFromKey )
+        $('#txSec').focus();
     }
 
     function txOnChangeFee() {
@@ -974,6 +1053,15 @@
     }
 
     // -- sign --
+    var sgData = null;
+    var sgType = 'clearsign';
+
+    function sgOnChangeType() {
+        var id = $(this).attr('name');
+        sgType = id;
+        if ( sgData )
+          $('#sgSig').val(makeSignedMessage(sgType, sgData.message, sgData.address, sgData.signature));
+    }
 
     function updateAddr(from, to) {
         var sec = from.val();
@@ -993,13 +1081,14 @@
             var pt = curve.getG().multiply(eckey.priv);
             eckey.pub = getEncoded(pt, compressed);
             eckey.pubKeyHash = Bitcoin.Util.sha256ripe160(eckey.pub);
-            addr = eckey.getBitcoinAddress();
+            addr = new Bitcoin.Address(eckey.getPubKeyHash());
+            addr.version = (version-128)&255;
             setErrorState(from, false);
         } catch (err) {
             setErrorState(from, true, "Bad private key");
         }
         to.val(addr);
-        return {"key":eckey, "compressed":compressed};
+        return {"key":eckey, "compressed":compressed, "addrtype":version, "address":addr};
     }
 
     function sgGenAddr() {
@@ -1008,19 +1097,54 @@
 
     function sgOnChangeSec() {
         $('#sgSig').val('');
+        sgData = null;
         clearTimeout(timeout);
         timeout = setTimeout(sgGenAddr, TIMEOUT);
     }
 
+    function fullTrim(message)
+    {
+        message = message.replace(/^\s+|\s+$/g, '');
+        message = message.replace(/^\n+|\n+$/g, '');
+        return message;
+    }
+
+    var sgHdr = [
+      "-----BEGIN BITCOIN SIGNED MESSAGE-----",
+      "-----BEGIN SIGNATURE-----",
+      "-----END BITCOIN SIGNED MESSAGE-----"
+    ];
+
+    var qtHdr = [
+      "-----BEGIN BITCOIN SIGNED MESSAGE-----",
+      "-----BEGIN BITCOIN SIGNATURE-----",
+      "-----END BITCOIN SIGNATURE-----"
+    ];
+
+    function makeSignedMessage(type, msg, addr, sig)
+    {
+      if (type=='clearsign')
+        return sgHdr[0]+'\n'+msg +'\n'+sgHdr[1]+'\n'+addr+'\n'+sig+'\n'+sgHdr[2];
+      else
+        return qtHdr[0]+'\n'+msg +'\n'+qtHdr[1]+'\nVersion: Bitcoin-qt (1.0)\nAddress: '+addr+'\n\n'+sig+'\n'+qtHdr[2];
+    }
+
     function sgSign() {
-        var message = $('#sgMsg').val();
-        var p = updateAddr($('#sgSec'), $('#sgAddr'));
-        var sig = sign_message(p.key, message, p.compressed);
-        $('#sgSig').val(sig);
+      var message = $('#sgMsg').val();
+      var p = updateAddr($('#sgSec'), $('#sgAddr'));
+
+      if ( !message || !p.address )
+        return;
+
+      message = fullTrim(message);
+      var sig = sign_message(p.key, message, p.compressed, p.addrtype);
+      sgData = {"message":message, "address":p.address, "signature":sig };
+      $('#sgSig').val(makeSignedMessage(sgType, sgData.message, sgData.address, sgData.signature));
     }
 
     function sgOnChangeMsg() {
         $('#sgSig').val('');
+        sgData = null;
         clearTimeout(timeout);
         timeout = setTimeout(sgUpdateMsg, TIMEOUT);
     }
@@ -1030,32 +1154,116 @@
     }
 
     // -- verify --
+    function vrOnChangeSig() {
+        //$('#vrAlert').empty();
+        window.location.hash='#verify';
+    }
+
+    function vrPermalink()
+    {
+      var msg = $('#vrMsg').val();
+      var sig = $('#vrSig').val();
+      var addr = $('#vrAddr').val();
+      return '?vrMsg='+encodeURIComponent(msg)+'&vrSig='+encodeURIComponent(sig)+'&vrAddr='+encodeURIComponent(addr);
+    }
+
+    function splitSignature(s)
+    {
+      var addr = '';
+      var sig = s;
+      if ( s.indexOf('\n')>=0 )
+      {
+        var a = s.split('\n');
+        addr = a[0];
+
+        // always the last
+        sig = a[a.length-1];
+
+        // try named fields
+        var h1 = 'Address: ';
+        for (i in a) {
+          var m = a[i];
+          if ( m.indexOf(h1)>=0 )
+            addr = m.substring(h1.length, m.length);
+        }
+
+        // address should not contain spaces
+        if (addr.indexOf(' ')>=0)
+          addr = '';
+
+        // some forums break signatures with spaces
+        sig = sig.replace(" ","");
+      }
+      return { "address":addr, "signature":sig };
+    }
+
+    function splitSignedMessage(s)
+    {
+      s = s.replace('\r','');
+
+      for (var i=0; i<2; i++ )
+      {
+        var hdr = i==0 ? sgHdr : qtHdr;
+
+        var p0 = s.indexOf(hdr[0]);
+        if ( p0>=0 )
+        {
+          var p1 = s.indexOf(hdr[1]);
+          if ( p1>p0 )
+          {
+            var p2 = s.indexOf(hdr[2]);
+            if ( p2>p1 )
+            {
+              var msg = s.substring(p0+hdr[0].length+1, p1-1);
+              var sig = s.substring(p1+hdr[1].length+1, p2-1);
+              var m = splitSignature(sig);
+              msg = fullTrim(msg); // doesn't work without this
+              return { "message":msg, "address":m.address, "signature":m.signature };
+            }
+          }
+        }
+      }
+      return false;
+    }
 
     function vrVerify() {
-        var message = $('#vrMsg').val();
-        var sig = $('#vrSig').val();
-        var res = verify_message(sig, message);
+        var s = $('#vrSig').val();
+        var p = splitSignedMessage(s);
+        var res = verify_message(p.signature, p.message, PUBLIC_KEY_VERSION);
 
-        if (res) {
-            var href = 'https://blockchain.info/address/' + res;
-            var a = '<a href=' + href + ' target=_blank>' + res + '</a>';
-            $('#vrRes').html('Verified to: ' + a);
-        } else {
-            $('#vrRes').text('false');
+        $('#vrAlert').empty();
+
+        var clone = $('#vrError').clone();
+
+        if ( p && res && (p.address==res || p.address==''))
+        {
+          clone = p.address==res ? $('#vrSuccess').clone() : $('#vrWarning').clone();
+          clone.find('#vrAddr').text(res);
         }
+
+        clone.appendTo($('#vrAlert'));
+
         return false;
     }
 
-    function vrClearRes() {
-        $('#vrRes').text('');
+    function crChange()
+    {
+      PUBLIC_KEY_VERSION = parseInt($(this).attr('title'));
+      PRIVATE_KEY_VERSION = (PUBLIC_KEY_VERSION+128)&255;
+      ADDRESS_URL_PREFIX = $(this).attr('href');
+      $('#crName').text($(this).text());
+      $('#crSelect').dropdown('toggle');
+      gen_update();
+      translate();
+      return false;
     }
 
     $(document).ready( function() {
 
         if (window.location.hash)
-            $('#tab-' + window.location.hash.substr(1)).tab('show');
+          $('#tab-' + window.location.hash.substr(1).split('?')[0]).tab('show');
 
-        $('a[data-toggle="tab"]').on('shown', function (e) {
+        $('a[data-toggle="tab"]').on('click', function (e) {
             window.location.hash = $(this).attr('href');
         });
 
@@ -1065,35 +1273,25 @@
         onInput('#hash', onChangeHash);
         onInput('#sec', onChangePrivKey);
 
-        $('#from_pass').click(update_gen_from);
-        $('#from_hash').click(update_gen_from);
-        $('#from_sec').click(update_gen_from);
+        $('#genRandom').click(genRandom);
 
-        $('#random').click(gen_random);
+        $('#gen_from label input').on('change', update_gen_from );
+        $('#gen_comp label input').on('change', update_gen_compressed );
 
-        $('#uncompressed').click(update_gen_compressed);
-        $('#compressed').click(update_gen_compressed);
-
-        $('#pass').val('correct horse battery staple');
-        calc_hash();
-        generate();
-        $('#pass').focus();
+        genRandomPass();
 
         // chains
 
-        $('#chPlay').click(chOnPlay);
-        $('#chStop').click(chOnStop);
+        $('#chRandom').click(chOnRandom);
 
-        $('#csv').click(onChangeFormat);
-        $('#json').click(onChangeFormat);
+        $('#chType label input').on('change', chOnChangeType);
+        $('#chFormat label input').on('change', chOnChangeFormat);
 
-        $('#chain_armory').click(onChangeMethod);
-        $('#chain_electrum').click(onChangeMethod);
-
-        onInput($('#range'), onChangeRange);
-        onInput($('#seed'), onChangeSeed);
-        onInput($('#memo'), onChangeMemo);
-        $('#elChange').change(onChangeChange);
+        onInput($('#chRange'), chOnChangeRange);
+        onInput($('#chCode'), chOnChangeCode);
+        onInput($('#chBackup'), chOnChangeBackup);
+        onInput($('#chChange'), chOnChangeRange);
+        chRange = parseInt($('#chRange').val());
 
         // transactions
 
@@ -1104,11 +1302,11 @@
         txSetUnspent(tx_unspent);
 
         $('#txGetUnspent').click(txGetUnspent);
-
-        $('#txBCI').click(txChangeType);
-        $('#txBBE').click(txChangeType);
+        $('#txType label input').on('change', txChangeType);
+        $('#txFrom label input').on('change', txChangeFrom);
 
         onInput($('#txSec'), txOnChangeSec);
+        onInput($('#txAddr'), txOnChangeAddr);
         onInput($('#txUnspent'), txOnChangeUnspent);
         onInput($('#txHex'), txOnChangeHex);
         onInput($('#txJSON'), txOnChangeJSON);
@@ -1119,18 +1317,20 @@
         $('#txAddDest').click(txOnAddDest);
         $('#txRemoveDest').click(txOnRemoveDest);
         $('#txSend').click(txSend);
-        $('#txRebuild').click(txRebuild);
+        $('#txSign').click(txSign);
 
         // converter
 
         onInput('#src', onChangeFrom);
-        $("body").on("click", "#enc_from .btn", update_enc_from);
-        $("body").on("click", "#enc_to .btn", update_enc_to);
+
+        $('#enc_from label input').on('change', update_enc_from );
+        $('#enc_to label input').on('change', update_enc_to );
 
         // sign
-        $('#sgSec').val('5JeWZ1z6sRcLTJXdQEDdB986E6XfLAkj9CgNE4EHzr5GmjrVFpf');
-        $('#sgAddr').val('17mDAmveV5wBwxajBsY7g1trbMW1DVWcgL');
-        $('#sgMsg').val("C'est par mon ordre et pour le bien de l'Etat que le porteur du présent a fait ce qu'il a fait.");
+
+        $('#sgSec').val($('#sec').val());
+        $('#sgAddr').val($('#addr').val());
+        $('#sgMsg').val("This is an example of a signed message.");
 
         onInput('#sgSec', sgOnChangeSec);
         onInput('#sgMsg', sgOnChangeMsg);
@@ -1139,12 +1339,44 @@
         $('#sgForm').submit(sgSign);
 
         // verify
-        $('#vrMsg').val($('#sgMsg').val());
 
-        onInput('#vrAddr', vrClearRes);
-        onInput('#vrMsg', vrClearRes);
-        onInput('#vrSig', vrClearRes);
         $('#vrVerify').click(vrVerify);
+        onInput('#vrSig', vrOnChangeSig);
+
+        $('#sgType label input').on('change', sgOnChangeType);
+
+        // -- permalink support (deprecated) --
+        var vrMsg = '';
+        var vrSig = '';
+        var vrAddr = '';
+        if ( window.location.hash && window.location.hash.indexOf('?')!=-1 )
+        {
+          var args = window.location.hash.split('?')[1].split('&');
+          for ( var i=0; i<args.length; i++ )
+          {
+            var arg = args[i].split('=');
+            if ( arg[0]=='vrMsg')
+              vrMsg=decodeURIComponent(arg[1]);
+            else if ( arg[0]=='vrSig')
+              vrSig=decodeURIComponent(arg[1]);
+            else if ( arg[0]=='vrAddr')
+              vrAddr=decodeURIComponent(arg[1]);
+          }
+
+          if (!vrAddr)
+            vrAddr = "<insert address here>"
+
+          if (vrMsg && vrSig && vrAddr)
+          {
+            $('#vrSig').val(makeSignedMessage( sgType, vrMsg, vrAddr, vrSig ));
+            vrVerify();
+          }
+        }
+        // -- /permalink support --
+
+        // currency select
+
+        $('#crCurrency ul li a').on('click', crChange);
 
     });
 })(jQuery);

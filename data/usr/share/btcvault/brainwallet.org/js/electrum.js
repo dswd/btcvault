@@ -7,22 +7,25 @@ function electrum_extend_chain(pubKey, privKey, n, forChange, fromPrivKey) {
     var mode = forChange ? 1 : 0;
     var mpk = pubKey.slice(1);
     var bytes = Crypto.charenc.UTF8.stringToBytes(n + ':' + mode + ':').concat(mpk);
-    var sequence = Crypto.SHA256(Crypto.SHA256(bytes, {asBytes: true}), {asBytes: true})
+    var sequence = Crypto.SHA256(Crypto.SHA256(bytes, {asBytes: true}), {asBytes: true});
     var secexp = null;
     var pt = ECPointFp.decodeFrom(curve.getCurve(), pubKey);
 
+    var A;
+
     if (fromPrivKey) {
-        var A = BigInteger.fromByteArrayUnsigned(sequence);
+        A = BigInteger.fromByteArrayUnsigned(sequence);
         var B = BigInteger.fromByteArrayUnsigned(privKey);
         var C = curve.getN();
         secexp = A.add(B).mod(C);
         pt = pt.add(curve.getG().multiply(A));
     } else {
-        var A = BigInteger.fromByteArrayUnsigned(sequence);
+        A = BigInteger.fromByteArrayUnsigned(sequence);
         pt = pt.add(curve.getG().multiply(A));
     }
 
     var newPriv = secexp ? secexp.toByteArrayUnsigned(): [];
+    for(;newPriv.length<32;) newPriv.unshift(0x00);
     var newPub = pt.getEncoded();
     var h160 = Bitcoin.Util.sha256ripe160(newPub);
     var addr = new Bitcoin.Address(h160);
@@ -37,8 +40,7 @@ function electrum_get_pubkey(privKey) {
     var curve = getSECCurveByName("secp256k1");
     var secexp = BigInteger.fromByteArrayUnsigned(privKey);
     var pt = curve.getG().multiply(secexp);
-    var pubKey = pt.getEncoded();
-    return pubKey;
+    return pt.getEncoded();
 }
 
 var Electrum = new function () {
@@ -73,15 +75,14 @@ var Electrum = new function () {
     }
 
     function calcAddr() {
-        var change = (counter == range);
-        var r = electrum_extend_chain(pubKey, privKey, change ? 0 : counter, change, true);
+        var r = electrum_extend_chain(pubKey, privKey, counter % range, counter >= range, true);
         onUpdate(r);
         counter++;
-        if (counter < range || (addChange && counter <= range)) {
-            timeout = setTimeout(calcAddr, 0);
-        } else {
+        if (counter >= range+addChange) {
             if (onSuccess) 
                 onSuccess();
+        } else {
+            timeout = setTimeout(calcAddr, 0);
         }
     }
 
@@ -105,9 +106,9 @@ var Electrum = new function () {
         calcAddr();
     };
 
-    this.stop = function() {
+    this.stop = function () {
         clearTimeout(timeout);
-    }
+    };
 
     return this;
 };
@@ -115,7 +116,7 @@ var Electrum = new function () {
 function electrum_test() {
 
     Electrum.init('12345678', function(r) {console.log(r);},
-        function(privKey) {Electrum.gen(5, function(r) {console.log(r);});});
+        function() {Electrum.gen(5, function(r) {console.log(r);});});
 
     /*
     1DLHQhEuLftmAMTiYhw4DvVWhFQ9hnbXio

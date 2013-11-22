@@ -26,12 +26,28 @@ var TX = new function () {
         outputs.push({address: addr, value: fval});
     }
 
+    this.removeOutputs = function() {
+        outputs = [];
+    }
+
     this.getBalance = function() {
         return balance;
     }
 
-    this.getAddress = function() {
-        return eckey.getBitcoinAddress().toString();
+    this.getFee = function(sendTx) {
+        var out = BigInteger.ZERO;
+        for (var i in outputs) {
+            var fval = outputs[i].value;
+            value = new BigInteger('' + Math.round(fval*1e8), 10);
+            out = out.add(value);
+        }
+        return balance.subtract(out);
+    }
+
+    this.getAddress = function(addrtype) {
+        var addr = new Bitcoin.Address(eckey.getPubKeyHash());
+        addr.version = addrtype ? addrtype : 0;
+        return addr.toString();
     }
 
     this.parseInputs = function(text, address) {
@@ -45,8 +61,10 @@ var TX = new function () {
         inputs = res.unspenttxs;
     }
 
-    this.construct = function() {
-        var sendTx = new Bitcoin.Transaction();
+    this.rebuild = function(sendTx, resign) {
+        if (!resign)
+          sendTx = new Bitcoin.Transaction();
+
         var selectedOuts = [];
         for (var hash in inputs) {
             if (!inputs.hasOwnProperty(hash))
@@ -58,7 +76,8 @@ var TX = new function () {
                 var b64hash = Crypto.util.bytesToBase64(Crypto.util.hexToBytes(hash));
                 var txin = new Bitcoin.TransactionIn({outpoint: {hash: b64hash, index: index}, script: script, sequence: 4294967295});
                 selectedOuts.push(txin);
-                sendTx.addInput(txin);
+                if (!resign)
+                  sendTx.addInput(txin);
             }
         }
 
@@ -66,7 +85,8 @@ var TX = new function () {
             var address = outputs[i].address;
             var fval = outputs[i].value;
             var value = new BigInteger('' + Math.round(fval * 1e8), 10);
-            sendTx.addOutput(new Bitcoin.Address(address), value);
+            if (!resign)
+              sendTx.addOutput(new Bitcoin.Address(address), value);
         }
 
         var hashType = 1;
@@ -84,6 +104,14 @@ var TX = new function () {
         }
         return sendTx;
     };
+
+    this.construct = function() {
+      return this.rebuild(null, false);
+    }
+
+    this.resign = function(sendTx) {
+      return this.rebuild(sendTx, true);
+    }
 
     function uint(f, size) {
         if (f.length < size)
@@ -194,13 +222,14 @@ var TX = new function () {
             var hash = Crypto.util.base64ToBytes(txin.outpoint.hash);
             var n = txin.outpoint.index;
             var prev_out = {'hash': Crypto.util.bytesToHex(hash.reverse()), 'n': n};
+            var seq = txin.sequence;
 
             if (n == 4294967295) {
                 var cb = Crypto.util.bytesToHex(txin.script.buffer);
-                r['in'].push({'prev_out': prev_out, 'coinbase' : cb});
+                r['in'].push({'prev_out': prev_out, 'coinbase' : cb, 'sequence':seq});
             } else {
                 var ss = dumpScript(txin.script);
-                r['in'].push({'prev_out': prev_out, 'scriptSig' : ss});
+                r['in'].push({'prev_out': prev_out, 'scriptSig' : ss, 'sequence':seq});
             }
         }
 
@@ -235,19 +264,22 @@ var TX = new function () {
             else
                 var script = parseScript(txi['scriptSig']);
 
+            var seq = txi['sequence'] === undefined ? 4294967295 : txi['sequence'];
+
             var txin = new Bitcoin.TransactionIn({
                 outpoint: { 
                     hash: Crypto.util.bytesToBase64(hash.reverse()),
                     index: n
                 },
                 script: new Bitcoin.Script(script),
-                sequence: 4294967295
+                sequence: seq
             });
             sendTx.addInput(txin);
         }
 
         var vout_sz = r['vout_sz'];
 
+        TX.removeOutputs();
         for (var i = 0; i < vout_sz; i++) {
             var txo = r['out'][i];
             var fval = parseFloat(txo['value']);
@@ -265,6 +297,7 @@ var TX = new function () {
             });
 
             sendTx.addOutput(txout);
+            TX.addOutput(txo,fval);
         }
         sendTx.lock_time = r['lock_time'];
         return sendTx;
