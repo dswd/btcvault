@@ -1,6 +1,6 @@
 #!/usr/bin/env xdg-open
 [Desktop Entry]
-Comment=Bitaddress.org
+Comment=Local copy
 Exec=xdg-open file:///usr/share/btcvault/bitaddress.org.html
 GenericName=Bitaddress.org
 Icon=text-html

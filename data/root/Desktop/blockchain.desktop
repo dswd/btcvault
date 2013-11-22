@@ -1,6 +1,6 @@
 #!/usr/bin/env xdg-open
 [Desktop Entry]
-Comment=Blockchain.info
+Comment=Remote site (Caution!)
 Exec=xdg-open https://blockchain.info
 GenericName=Blockchain.info
 Icon=/usr/share/app-install/icons/blockchain.png

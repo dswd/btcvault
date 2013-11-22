@@ -1,6 +1,6 @@
 #!/usr/bin/env xdg-open
 [Desktop Entry]
-Comment=Brainwallet.org
+Comment=Local copy
 Exec=xdg-open file:///usr/share/btcvault/brainwallet.org/index.html
 GenericName=Brainwallet.org
 Icon=text-html
