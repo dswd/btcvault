@@ -31,39 +31,6 @@ init_bundle_target_dir
 activate_required_bundles
 
 patch -p0 <<EOF
---- electrum.orig       2013-11-12 22:52:00.000000000 +0000
-+++ Electrum-${SLAX_BUNDLE_VERSION}/electrum 2013-11-21 22:30:34.444001594 +0000
-@@ -114,6 +114,22 @@
-     elif result is not None:
-         util.print_json(result)
- 
-+def ensurePersistent(path):
-+    path = os.path.abspath(path)
-+    while not os.path.ismount(path):
-+        path = os.path.dirname(path)
-+    if path != '/':
-+        return
-+    from glob import glob
-+    aufs = glob('/sys/fs/aufs/*/br0')
-+    if not aufs:
-+        return
-+    with open(aufs[0]) as fp:
-+        branch = fp.read().strip()
-+    if 'memory' in branch:
-+        print >>sys.stderr, "Electrum refuses to use a wallet on temporary storage. Please select a permanent storage location using -w."
-+        sys.exit(-1)
-+      
- 
- if __name__ == '__main__':
- 
-@@ -182,6 +198,7 @@
- 
-     if cmd.requires_wallet:
-         wallet = Wallet(storage)
-+        ensurePersistent(config.path)
-     else:
-         wallet = None
- 
 --- setup.py.orig       2013-11-21 22:37:44.472002333 +0000
 +++ Electrum-${SLAX_BUNDLE_VERSION}/setup.py    2013-11-21 22:37:56.986002355 +0000
 @@ -2,7 +2,7 @@
