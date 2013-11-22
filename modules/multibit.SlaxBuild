@@ -1,0 +1,30 @@
+#!/bin/bash
+. /usr/share/slax/slaxbuildlib
+
+SLAX_BUNDLE_NAME="multibit"
+SLAX_BUNDLE_VERSION="0.5.15"
+SLAX_BUNDLE_DESCRIPTION="Multibit bitcoin client"
+SLAX_BUNDLE_CATEGORIES="network,utilities,security"
+SLAX_BUNDLES_REQUIRED="openjdk6"
+SLAX_BUNDLES_REQUIRED_TO_COMPILE_ONLY=""
+SLAX_BUNDLE_MAINTAINER_NAME="Dennis Schwerdel"
+SLAX_BUNDLE_MAINTAINER_EMAIL="schwerdel@googlemail.com"
+
+SLAX_BUNDLE_SOURCE_DOWNLOAD[0]="https://multibit.org/releases/multibit-0.5.15/multibit-$SLAX_BUNDLE_VERSION-linux.jar"
+
+check_variables_for_errors
+download_all_sources
+
+md5sum --check <<EOF
+4bf59aa642806ea0ca56ed6575ca40bf  multibit-0.5.15-linux.jar
+EOF
+
+init_bundle_target_dir
+activate_required_bundles
+
+(sleep 1; echo 1; sleep 1; echo 1; sleep 1; echo ${SLAX_CURRENT_BUILDSCRIPT_DIR}; sleep 1; echo 1) | java -jar ${SLAX_CURRENT_BUILDSCRIPT_DIR}/multibit-$SLAX_BUNDLE_VERSION-linux.jar -console
+mkdir -p ${SLAX_BUNDLE_TARGET}/usr/share/multibit/
+cp ${SLAX_CURRENT_BUILDSCRIPT_DIR}/multibit{-exe.jar,48.png} ${SLAX_BUNDLE_TARGET}/usr/share/multibit/
+
+strip_unneeded_objects
+create_slax_bundle
