@@ -13,12 +13,11 @@ CONTENT
 <h2>Features</h2>
 BTC Vault is based on Slax and thus contains a full Linux installation including the KDE desktop
 environment and the Firefox webbrowser.<br/>
-Also, BTC Vault includes the <a href="electrum.html">Electrum bitcoin client</a> that you can use
-to manage your coins.<br/>
+Also, BTC Vault includes the <a href="electrum.html">Electrum bitcoin client</a> and the 
+<a href="multibit.html">MultiBit bitcoin client</a> that you can use to manage your coins.<br/>
 Some additional modifications include:
 <ul>
-  <li>All Electrum wallets (<tt>electrum.dat</tt> and all <tt>.wallet</tt> files) will open with 
-      Electrum.</li>
+  <li>All Electrum wallets (<tt>electrum.dat</tt> files) will open with Electrum.</li>
   <li>You can create new wallets by using the action from the folder context menu or the desktop
       icon.</li>
   <li>You can create encrypted 7zip archives by using the action from the file context menu.</li>
@@ -41,6 +40,20 @@ Some additional modifications include:
 
 <h2>Changelog</h2>
 <ul>
+  <li>0.3: Feature release (2013-11-23)
+    <ul>
+      <li>Added MultiBit client</li>
+      <li>Updated Electrum to version 1.9.4</li>
+      <li>Updated local copies of Bitaddress.org and Brainwallet.org</li>
+      <li>Sorted icons on desktop</li>
+    </ul></li>
+  <li>0.2: Bugfix &amp; feature release (2013-04-06)
+    <ul>
+      <li>Added local copy of bitaddress.org with shortcut on desktop and in menu</li>
+      <li>Disabled flash plugin by default</li>
+      <li>Disabled Xorg server network functionality</li>
+      <li>Added 7z encryption capability</li>
+    </ul></li>
   <li>0.1: Initial release (2013-03-31)
     <ul>
       <li>Electrum software, connected with .wallet files, link on desktop</li>
@@ -49,13 +62,6 @@ Some additional modifications include:
       <li>Added <tt>bitcoin:</tt> url-scheme to firefox</li>
       <li>Home folder icon on desktop and in panel</li>
       <li>Keyboard chooser got German, French and Spanish layouts</li>
-    </ul></li>
-  <li>0.2: Bugfix &amp; feature release (2013-04-06)
-    <ul>
-      <li>Added local copy of bitaddress.org with shortcut on desktop and in menu</li>
-      <li>Disabled flash plugin by default</li>
-      <li>Disabled Xorg server network functionality</li>
-      <li>Added 7z encryption capability</li>
     </ul></li>
 </ul>
 
