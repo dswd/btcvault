@@ -17,8 +17,8 @@
 +    <NC:handlerProp RDF:resource="urn:scheme:handler:bitcoin"/>
 +  </RDF:Description>
 +  <RDF:Description RDF:about="urn:scheme:externalApplication:bitcoin"
-+                   NC:prettyName="electrum-uri.sh"
-+                   NC:path="/usr/bin/electrum-uri.sh" />
++                   NC:prettyName="bitcoin-uri.sh"
++                   NC:path="/usr/bin/bitcoin-uri.sh" />
 +  <RDF:Description RDF:about="urn:scheme:handler:bitcoin"
 +                   NC:alwaysAsk="false">
 +    <NC:externalApplication RDF:resource="urn:scheme:externalApplication:bitcoin"/>

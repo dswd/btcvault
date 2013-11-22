@@ -1,5 +1,5 @@
 [Desktop Action NewWallet]
-Exec=electrum-wrapper.sh save '%u'
+Exec=electrum-wrapper.sh savedialog '%u'
 Name=Create Electrum Bitcoin Wallet...
 Icon=/usr/share/app-install/icons/electrum.png
 

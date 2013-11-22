@@ -1,0 +1,14 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Comment=Multibit Bitcoin Client
+Exec=multibit-wrapper.sh open
+GenericName[en_US]=MultiBit
+GenericName=MultiBit
+Icon=/usr/share/multibit/multibit48.png
+Name[en_US]=MultiBit
+Name=MultiBit
+Categories=Network;
+StartupNotify=false
+Terminal=false
+Type=Application
+

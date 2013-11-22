@@ -4,7 +4,6 @@
     <comment>Electrum Bitcoin Wallet</comment>
     <icon name="/usr/share/app-install/icons/electrum.png"/>
     <glob-deleteall/>
-    <glob pattern="*.wallet"/>
     <glob pattern="electrum.dat"/>  
   </mime-type>
 </mime-info>

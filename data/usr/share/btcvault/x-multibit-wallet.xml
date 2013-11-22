@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/x-multibit-wallet">
+    <comment>MultiBit Bitcoin Wallet</comment>
+    <icon name="/usr/share/multibit/multibit48.png"/>
+    <glob-deleteall/>
+    <glob pattern="*.wallet"/>  
+  </mime-type>
+</mime-info>

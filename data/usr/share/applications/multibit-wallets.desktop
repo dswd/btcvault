@@ -1,0 +1,8 @@
+[Desktop Entry]
+Comment=MiltiBit Bitcoin Client
+Exec=multibit-wrapper.sh open %u
+GenericName=MultiBit
+Icon=/usr/share/multibit/multibit48.png
+MimeType=application/x-multibit-wallet
+Name=MultiBit Bitcoin
+StartupNotify=true
