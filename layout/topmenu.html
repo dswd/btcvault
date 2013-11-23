@@ -16,6 +16,12 @@ menu_active(Electrum,electrum.html)
 menu_inactive(Electrum,electrum.html)
 #endif
 
+#ifdef SECTION_MULTIBIT
+menu_active(MultiBit,multibit.html)
+#else
+menu_inactive(MultiBit,multibit.html)
+#endif
+
 #ifdef SECTION_OBTAIN
 menu_active(Download &amp; Use,obtain.html)
 #else

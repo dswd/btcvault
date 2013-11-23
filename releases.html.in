@@ -15,6 +15,26 @@ CONTENT
 
 <h1>BTC Vault Releases</h1>
 
+<h2>BTC Vault 0.3: Feature release (2013-11-23)</h2>
+
+<h3>Changes</h3>
+<ul>
+  <li>Added MultiBit client</li>
+  <li>Updated Electrum to version 1.9.4</li>
+  <li>Updated local copies of Bitaddress.org and Brainwallet.org</li>
+  <li>Sorted icons on desktop</li>
+</ul>
+
+<h3>Release files</h3>
+<ul>
+  <li><a href="https://mega.co.nz/#!1Q01wJSQ!OCk69C-6lz8Mp2ey1BRKPzFLbuwlsjDscdhmwoUBQrk">btcvault-0.3.iso</a> (for installation on CD-Rom, 272 MiB)</li>
+  <li><a href="https://mega.co.nz/#!VYNASJTC!OWU1UmRVS3FF45Am7YcUYhn34v4EBQUUX1-ecsydRI4">btcvault-0.3.zip</a> (for installation on USB stick, 272 MiB)</li>
+  <li><a href="https://mega.co.nz/#!IRUEEQyB!EG89LROkscHlg2AJV8jFiHYh4So5fehomsrx4EKJRdg">9999-btcvault.sb</a> (for usage on a Slax system, 1.2 MiB)</li>
+  <li><a href="https://mega.co.nz/#!lV1QxIKb!KioX73gdMPQZmZB8vz5JnGJ5WbUP_mppMQA56pOvxEU">9998-electrum.sb</a> (for usage on a Slax system, 0.6 MiB)</li>
+  <li><a href="https://mega.co.nz/#!AIdlyZpD!Hrp5HEYNJx0JPk_w0b70E2DA1thmdr2KEBcPbpKVDDE">9997-multibit.sb</a> (for usage on a Slax system, 7.3 MiB)</li>
+  <li><a href="btcvault-0.3-checksums.txt">Release checksums</a></li>
+</ul>
+
 
 <h2>BTC Vault 0.2: Bugfix &amp; feature release (2013-04-06)</h2>
 

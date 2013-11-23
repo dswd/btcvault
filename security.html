@@ -30,6 +30,8 @@
 
 <li><a href="electrum.html">Electrum</a></li>
 
+<li><a href="multibit.html">MultiBit</a></li>
+
 <li><a href="obtain.html">Download &amp; Use</a></li>
 
 <li id="active"><a href="security.html" id="current">Security</a></li>
@@ -116,34 +118,37 @@ secure with the following steps:
 Only in btcvault/slax: 1188-python.sb
 Only in btcvault/slax: 2354-sip.sb
 Only in btcvault/slax: 2356-pyqt.sb
-Only in btcvault/slax: 2692-electrum.sb
+Only in btcvault/slax: 2235-p7zip.sb
+Only in btcvault/slax: 2993-openjdk6.sb
 Only in btcvault/slax: 473-dbus-python.sb
+Only in btcvault/slax: 9997-multibit.sb
+Only in btcvault/slax: 9998-electrum.sb
 Only in btcvault/slax: 9999-btcvault.sb
 </code></pre></li>
         <li>The output should be similar to this. It must not include any lines that say that files
             differ.</li>
       </ul></li>
   <li>All the Slax modules except <tt>9999-btcvault.sb</tt> can be downloaded from the Website and
-      compared. Also the build scripts can be downloaded, checked and executed to build new modules
+      compared. Also the build scripts can be downloaded (either from Slax or from BTCVault homepage), checked and executed to build new modules
       (that can be compared to the ones you possess).</br>
       Example:
       <ul>
-        <li>Download the build script for <tt>2692-electrum.sb</tt> called 
-            <tt>electrum.SlaxBuild</tt> to a Slax system from the Slax homepage.</li>
+        <li>Download the build script for <tt>9998-electrum.sb</tt> called 
+            <tt>electrum.SlaxBuild</tt> to a Slax system from the BTCVault homepage.</li>
         <li>Check the contents of that script in a text editor and make sure that it fetches 
             original sources and that the commands to build the module are not inserting something
             malicious.</li>
         <li>Build the module from that build script by executing it on the command line. The module
             will be located in a file named <tt>electrum.sb</tt>.</li>
         <li>Compare the contents of the BTC Vault module to the one you just created:
-<pre><code>$ unsquashfs -d btcvault_module 2692-electrum.sb
+<pre><code>$ unsquashfs -d btcvault_module 9998-electrum.sb
 [...]
 $ unsquashfs -d rebuilt_module electrum.sb
 [...]
 $ diff -r btcvault_module rebuilt_module
 
 </code></pre></li>
-        <li>The last command must not report any changed to the files.</li>
+        <li>The last command must not report any changes to the files.</li>
       </ul></li>
   <li>The file <tt>9999-btcvault.sb</tt> contains all BTC Vault specific changes to Slax. Those 
       changes are not many, so you can just unpack that module using the <tt>unsquashfs</tt> 
